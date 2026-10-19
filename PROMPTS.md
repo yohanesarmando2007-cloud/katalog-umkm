@@ -112,3 +112,15 @@ AI membuat Server Action `tambahProduk` di `app/admin/actions.js`, memperbarui `
 **Perbaikan:**
 Menambahkan validasi *server-side* (nama wajib diisi dan harga bernilai positif), memverifikasi autentikasi admin via `supabase.auth.getUser()`, serta melakukan revalidasi cache agar produk yang baru ditambah langsung muncul di halaman admin maupun katalog publik.
 
+## US-09 Ubah produk
+
+**Prompt:**
+[SENDIRI] Baca docs/user-stories.md bagian US-09 dan docs/rancangan-teknis.md.
+
+Buat fitur "Ubah produk". Di app/admin/produk/[id]/ubah/page.jsx, ambil data lama produk dari tabel "produk" di Supabase berdasarkan id URL dan isi ke dalam form. Di app/admin/actions.js, buat Server Action `ubahProduk` untuk memperbarui data produk di Supabase lalu arahkan ke /admin. Pastikan aksi terlindungi login admin. Tampilkan pesan error jika pembaruan gagal, dan hapus CatatanBelumAktif tanpa mengubah layout yang ada.
+
+**Hasil:**
+Dibuat aksi hapusProduk di app/admin/actions.js. Tombol hapus pada tabel admin disambungkan dengan konfirmasi JavaScript/Client Component untuk memanggil Server Action tersebut dan menghapus data.
+
+**Perbaikan:**
+Memastikan pemanggilan fungsi delete aman (protected) di sisi server dan daftar produk (cache) dimuat ulang (revalidatePath) setelah penghapusan berhasil.

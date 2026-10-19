@@ -147,3 +147,97 @@ export async function tambahProduk(prevState, formData) {
 }
 
 export const createProduct = tambahProduk;
+
+export async function ubahProduk(id, prevState, formData) {
+  const data = formData instanceof FormData ? formData : prevState;
+  const nama = data?.get?.("nama")?.toString().trim();
+  const hargaStr = data?.get?.("harga")?.toString().trim();
+  const kategori = data?.get?.("kategori")?.toString().trim() || null;
+  const foto_url = data?.get?.("foto_url")?.toString().trim() || null;
+  const deskripsi = data?.get?.("deskripsi")?.toString().trim() || null;
+
+  if (!nama) {
+    return { error: "Nama produk wajib diisi." };
+  }
+
+  const harga = parseInt(hargaStr, 10);
+  if (isNaN(harga) || harga < 0) {
+    return { error: "Harga produk harus berupa angka dan tidak boleh negatif." };
+  }
+
+  try {
+    const supabase = await createSessionClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return {
+        error: "Sesi telah berakhir atau Anda belum login. Silakan login kembali.",
+      };
+    }
+
+    const { data: produk, error: updateError } = await supabase
+      .from("produk")
+      .update({ nama, harga, deskripsi, foto_url, kategori })
+      .eq("id", id)
+      .select("id")
+      .maybeSingle();
+
+    if (updateError) {
+      return {
+        error: updateError.message || "Gagal memperbarui produk di database.",
+      };
+    }
+
+    if (!produk) {
+      return { error: "Produk tidak ditemukan atau tidak dapat diperbarui." };
+    }
+  } catch {
+    return { error: "Terjadi kesalahan saat memperbarui produk." };
+  }
+
+  revalidatePath("/", "layout");
+  revalidatePath("/admin");
+  redirect("/admin");
+}
+
+export async function hapusProduk(id) {
+  try {
+    const supabase = await createSessionClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return {
+        error: "Sesi telah berakhir atau Anda belum login. Silakan login kembali.",
+      };
+    }
+
+    const { data: produk, error: deleteError } = await supabase
+      .from("produk")
+      .delete()
+      .eq("id", id)
+      .select("id")
+      .maybeSingle();
+
+    if (deleteError) {
+      return {
+        error: deleteError.message || "Gagal menghapus produk dari database.",
+      };
+    }
+
+    if (!produk) {
+      return { error: "Produk tidak ditemukan atau tidak dapat dihapus." };
+    }
+  } catch {
+    return { error: "Terjadi kesalahan saat menghapus produk." };
+  }
+
+  revalidatePath("/", "layout");
+  revalidatePath("/admin");
+  redirect("/admin");
+}
