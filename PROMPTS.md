@@ -98,3 +98,17 @@ AI memperbarui `app/admin/page.jsx` untuk mengambil daftar produk dari tabel `pr
 
 **Perbaikan:**
 Memastikan query diambil secara *server-side* menggunakan koneksi `lib/supabase`, menambahkan kondisi pesan *"Belum ada produk"* saat tabel kosong, serta mempertahankan struktur layout halaman admin (`NavAdmin` dan tombol "Tambah produk").
+
+## US-08 Tambah produk
+
+**Prompt:**
+[SENDIRI] Baca docs/user-stories.md bagian US-08 dan docs/rancangan-teknis.md.
+
+Buat Server Action tambah produk di app/admin/actions.js yang menyimpan produk baru (nama, harga, deskripsi, foto_url, kategori) ke tabel "produk" di Supabase, lalu mengalihkan pengguna kembali ke /admin. Sambungkan ke form di app/admin/produk/baru/page.jsx. Pastikan aksi ini terproteksi autentikasi admin di server dan menampilkan pesan error jika simpan gagal. Hapus CatatanBelumAktif dari halaman tersebut dan pertahankan tampilannya.
+
+**Hasil:**
+AI membuat Server Action `tambahProduk` di `app/admin/actions.js`, memperbarui `components/FormProduk.jsx` agar mendukung penanganan form Server Action dan notifikasi error, serta menyambungkannya di `app/admin/produk/baru/page.jsx` memakai `useActionState`. Komponen `CatatanBelumAktif` berhasil dihapus tanpa mengubah tampilan layout.
+
+**Perbaikan:**
+Menambahkan validasi *server-side* (nama wajib diisi dan harga bernilai positif), memverifikasi autentikasi admin via `supabase.auth.getUser()`, serta melakukan revalidasi cache agar produk yang baru ditambah langsung muncul di halaman admin maupun katalog publik.
+
