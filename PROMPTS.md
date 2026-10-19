@@ -85,3 +85,16 @@ Mengecualikan `/admin/login` dari aturan *redirect* agar tidak terjadi *infinite
 ## Debugging dan fitur bonus
 
 Tambahkan bagian baru untuk setiap error yang kamu perbaiki atau fitur bonus yang kamu kerjakan.
+
+## US-07 List Produk
+
+**Prompt:**
+[SENDIRI] Baca docs/user-stories.md bagian US-07 dan docs/rancangan-teknis.md.
+
+Ubah app/admin/page.jsx supaya daftar produk yang ditampilkan diambil dari tabel "produk" di Supabase secara server-side, memakai koneksi Supabase yang ada di lib/supabase. Tampilkan seluruh produk lengkap dengan foto, nama, kategori, dan harga berformat rupiah. Jika tabel kosong, tampilkan pesan "Belum ada produk". Hapus komponen CatatanBelumAktif dari halaman ini dan pertahankan tampilan serta struktur layout halaman admin yang sudah ada.
+
+**Hasil:**
+AI memperbarui `app/admin/page.jsx` untuk mengambil daftar produk dari tabel `produk` di Supabase secara *server-side* dan mengurutkannya berdasarkan `id`. Seluruh produk dirender menggunakan komponen `TabelProduk` (foto, nama, kategori, harga rupiah, tombol Ubah/Hapus), dan komponen `CatatanBelumAktif` berhasil dihapus.
+
+**Perbaikan:**
+Memastikan query diambil secara *server-side* menggunakan koneksi `lib/supabase`, menambahkan kondisi pesan *"Belum ada produk"* saat tabel kosong, serta mempertahankan struktur layout halaman admin (`NavAdmin` dan tombol "Tambah produk").
