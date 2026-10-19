@@ -51,25 +51,36 @@ Baca AGENTS.md bagian aturan keamanan dan docs/user-stories.md bagian US-04.
 Buat login admin memakai Supabase Auth (email dan password) dengan @supabase/ssr dan cookie, memakai SUPABASE_URL dan SUPABASE_PUBLISHABLE_KEY. Login diproses dengan Server Action di app/admin/actions.js dan disambungkan ke form di app/admin/login/page.jsx. Login berhasil diarahkan ke /admin; login gagal menampilkan pesan error yang jelas di halaman login. Buat juga tombol "Keluar" di components/NavAdmin.jsx berfungsi: mengakhiri sesi lalu kembali ke /admin/login. Jangan ubah tampilan. Hapus CatatanBelumAktif dari halaman login.
 
 **Hasil:**
-
+AI membuat Server Actions `login` dan `keluar` di `app/admin/actions.js`, menambahkan penanganan cookie Supabase Auth via `@supabase/ssr` di `lib/supabase/server.js`, menyambungkan form login menggunakan `useActionState` di `app/admin/login/page.jsx`, serta memperbarui fungsi tombol Keluar pada `components/NavAdmin.jsx`. Komponen `CatatanBelumAktif` berhasil dihapus tanpa merusak tampilan.
 
 **Perbaikan:**
+Menyesuaikan pesan error autentikasi agar tampil secara intuitif bagi pengguna jika kredensial salah, serta mengonfigurasi pengelolaan sesi cookie `@supabase/ssr` agar proses login dan pengakhiran sesi (*sign out*) bekerja stabil di lingkungan Next.js Server Actions.
 
 ## US-05 Ganti password
 
 **Prompt:**
+Baca docs/user-stories.md bagian US-05.
+
+Buat Server Action ganti password di app/admin/actions.js untuk admin yang sedang login, memakai Supabase Auth. Validasi di server: password baru minimal 8 karakter dan harus sama dengan konfirmasi. Tampilkan pesan berhasil atau pesan error yang jelas di halaman. Sambungkan ke form di app/admin/password/page.jsx tanpa mengubah tampilannya. Hapus CatatanBelumAktif dari halaman ini.
 
 **Hasil:**
+AI menambahkan Server Action `gantiPassword` pada `app/admin/actions.js` dan menyambungkannya ke komponen form di `app/admin/password/page.jsx` menggunakan `useActionState`. Komponen `CatatanBelumAktif` berhasil dihapus tanpa mengubah struktur dan tampilan form.
 
 **Perbaikan:**
+Menambahkan validasi *server-side* yang ketat (memeriksa sesi aktif via `supabase.auth.getUser()`, batas minimal 8 karakter, dan kecocokan konfirmasi password) sebelum memperbarui password via `supabase.auth.updateUser()`, serta menampilkan notifikasi pesan sukses hijau atau error merah secara dinamis di halaman.
 
 ## US-06 Proteksi halaman admin
 
 **Prompt:**
+Baca AGENTS.md aturan keamanan nomor 3 dan 4, dan docs/user-stories.md bagian US-06.
+
+Buat file proxy.js di root proyek (Next.js 16). Semua rute /admin kecuali /admin/login wajib login dengan Supabase Auth; kalau belum login, alihkan ke /admin/login. Pastikan juga setiap Server Action yang mengubah data memeriksa login di server. Hapus CatatanBelumAktif dari halaman /admin.
 
 **Hasil:**
+AI membuat file `proxy.js` di root proyek menggunakan `@supabase/ssr` untuk memeriksa status autentikasi via `supabase.auth.getUser()`. Pengguna yang belum login otomatis dialihkan ke `/admin/login` jika mencoba mengakses `/admin` atau sub-halamannya. Komponen `CatatanBelumAktif` di `app/admin/page.jsx` juga berhasil dihapus.
 
 **Perbaikan:**
+Mengecualikan `/admin/login` dari aturan *redirect* agar tidak terjadi *infinite loop*, serta memastikan Server Action `gantiPassword` di `app/admin/actions.js` tetap memverifikasi autentikasi admin di sisi server sebelum memproses perubahan data.
 
 ## Debugging dan fitur bonus
 
